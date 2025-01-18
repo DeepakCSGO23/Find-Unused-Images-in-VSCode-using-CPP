@@ -3,21 +3,20 @@
 #include <string>
 #include <filesystem>
 #include <unordered_set>
-
+#include <algorithm>
+#include <sstream>
+#include <vector>
 int main()
 {
     std::string basePath;
     std::cout << "Enter the project path : \n";
-    std::getline(std::cin, basePath); // "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp";
+    std::getline(std::cin, basePath);
+    // "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp";
 
     std::unordered_set<std::string> validExtensions = {".js", ".jsx", ".html", ".css"};
     std::unordered_set<std::string> validImageExtensions = {".jpg", ".jpeg", ".png", ".webp"};
 
     // Find all the images first
-    // std::string imageFilesPath;
-    // std::cout << "Enter the path where all the images are available : \n";
-    // std::getline(std::cin, imageFilesPath);
-    // std::string imageFilesPath = "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp\\public\\courosal";
     //  Contains only strings
     std::unordered_set<std::string> imageFiles;
 
@@ -25,7 +24,11 @@ int main()
     {
         if (entry.path().string().find("node_modules") == std::string::npos && validImageExtensions.find(entry.path().extension().string()) != validImageExtensions.end())
         {
-            imageFiles.insert(entry.path().string());
+            std::string relativePath = std::filesystem::relative(entry.path(), basePath).string();
+            // Check from public down the way to last
+            // '' passing character "" passing string
+            std::replace(relativePath.begin(), relativePath.end(), '\\', '/');
+            imageFiles.insert(relativePath);
         }
     }
     for (auto image : imageFiles)
@@ -51,14 +54,32 @@ int main()
                 std::string fileContents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
                 file.close();
                 // Finding if any of the image file is used in this currently oponened file
-                for (auto image : imageFiles)
+                for (auto imageFile : imageFiles)
                 {
-                    // Found the image file in the file so remove that image from the image list as the image is found (used)
+                    std::stringstream ss(imageFile);
+                    std::string folder;
+                    std::vector<std::string> folders;
 
-                    if (fileContents.find(image) != std::string::npos)
+                    while (std::getline(ss, folder, '/'))
                     {
-                        imageFiles.erase(image);
+                        folders.push_back(folder);
                     }
+
+                    // Generating all possible paths of the image
+                    std::string path = "";
+                    for (uint16_t i = folders.size() - 1; i >= 0; i--)
+                    {
+                        path += "/" + folders[i];
+                        // Here add all possiblity css , js , html (single and double quotes)
+                        if (fileContents.find(path) == std::string::npos)
+                        {
+                            std::cout << "file contains " << path << " in file " << imageFile << "\n";
+                            imageFiles.erase(imageFile);
+                            break;
+                        }
+                    }
+
+                    folder.clear();
                 }
             }
         }
