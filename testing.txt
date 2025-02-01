@@ -1,0 +1,3 @@
+public/courousal/gaming.jpg
+/gaming.jpg
+

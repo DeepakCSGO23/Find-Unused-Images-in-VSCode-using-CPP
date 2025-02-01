@@ -10,8 +10,8 @@ int main()
 {
     std::string basePath;
     std::cout << "Enter the project path : \n";
-    std::getline(std::cin, basePath);
-    // "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp";
+    // std::getline(std::cin, basePath);
+    basePath = "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp";
 
     std::unordered_set<std::string> validExtensions = {".js", ".jsx", ".html", ".css"};
     std::unordered_set<std::string> validImageExtensions = {".jpg", ".jpeg", ".png", ".webp"};
@@ -31,10 +31,10 @@ int main()
             imageFiles.insert(relativePath);
         }
     }
-    for (auto image : imageFiles)
-    {
-        std::cout << image << "\n";
-    }
+    // for (auto image : imageFiles)
+    // {
+    //     std::cout << image << "\n";
+    // }
 
     try
     {
@@ -43,9 +43,11 @@ int main()
             // If the substring is not found the find function returns a large number which is nothing but the same value as the value in npos
             if (entry.path().string().find("node_modules") == std::string::npos && validExtensions.find(entry.path().extension().string()) != validExtensions.end())
             {
+
                 // std::cout << "checking file : " << entry.path() << "\n";
                 std::string fileName = entry.path().string();
-                // Opening the file using the if file stream
+                // std::cout << fileName << "\n";
+                //  Opening the file using the if file stream
                 std::ifstream file(fileName);
                 if (!file)
                 {
@@ -67,18 +69,21 @@ int main()
 
                     // Generating all possible paths of the image
                     std::string path = "";
-                    for (uint16_t i = folders.size() - 1; i >= 0; i--)
+                    for (int i = folders.size() - 1; i >= 0; i--)
                     {
-                        path += "/" + folders[i];
+
+                        path = "/" + folders[i] + path;
+
                         // Here add all possiblity css , js , html (single and double quotes)
-                        if (fileContents.find(path) == std::string::npos)
+                        // With leading '/' and without leading '/'
+                        // HTML , CSS and JS
+                        if (fileContents.find("src=\"" + path + "\"") != std::string::npos || fileContents.find("src='" + path + "'") != std::string::npos || fileContents.find("src=\"" + path.substr(1) + "\"") != std::string::npos || fileContents.find("src='" + path.substr(1) + "'") != std::string::npos || fileContents.find("url(\"" + path + "\")") != std::string::npos || fileContents.find("url('" + path + "')") != std::string::npos || fileContents.find("url(\"" + path.substr(1) + "\")") != std::string::npos || fileContents.find("url('" + path.substr(1) + "')") != std::string::npos)
                         {
-                            std::cout << "file contains " << path << " in file " << imageFile << "\n";
+                            // std::cout << imageFile << " is found in " << fileName << "\n";
                             imageFiles.erase(imageFile);
                             break;
                         }
                     }
-
                     folder.clear();
                 }
             }
