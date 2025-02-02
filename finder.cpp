@@ -19,10 +19,8 @@ int main()
     projectFilePath = "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp";
     std::unordered_set<std::string> validFileExtensions = {".js", ".jsx", ".html", ".css"};
 
-    std::unordered_set<std::string> validImageExtensions = {".jpg", ".jpeg", ".png", ".webp"};
+    std::unordered_set<std::string> validImageExtensions = {".jpg", ".jpeg", ".png", ".webp", ".svg"};
 
-    // Find all the images first
-    //  Contains only strings
     std::unordered_set<std::string> imageFiles;
 
     for (const auto &entry : std::filesystem::recursive_directory_iterator(publicFolderPath))
@@ -37,10 +35,6 @@ int main()
             imageFiles.insert(relativePath);
         }
     }
-    // for (auto i : imageFiles)
-    // {
-    //     std::cout << i << "\n";
-    // }
 
     try
     {
@@ -63,15 +57,6 @@ int main()
                 // Finding if any of the image file is used in this currently oponened file
                 for (auto imageFile : imageFiles)
                 {
-                    // std::cout << "hgere";
-                    // std::stringstream ss(imageFile);
-                    // std::string folder;
-                    // std::vector<std::string> folders;
-
-                    // while (std::getline(ss, folder, '/'))
-                    // {
-                    //     folders.push_back(folder);
-                    // }
 
                     std::vector<std::string> possiblePaths = {imageFile, "/" + imageFile, "./" + imageFile, "../" + imageFile, "public" + '/' + imageFile, "/public/" + imageFile, "./public/" + imageFile, "../public/" + imageFile};
                     //* icons/logo.png , /icons/logo.png , ./icons/logo.png , ../icons/logo.png , public/icons/logo.png , /public/icons/logo.png , ./public/icons/logo.png , ../public/icons/logo.png
