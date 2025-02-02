@@ -6,47 +6,51 @@
 #include <algorithm>
 #include <sstream>
 #include <vector>
+#include <regex>
 int main()
 {
-    std::string basePath;
-    std::cout << "Enter the project path : \n";
-    // std::getline(std::cin, basePath);
-    basePath = "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp";
 
-    std::unordered_set<std::string> validExtensions = {".js", ".jsx", ".html", ".css"};
+    std::string publicFolderPath, projectFilePath;
+
+    std::cout << "Enter the project path : \n";
+
+    // std::getline(std::cin, publicFolderPath);
+    publicFolderPath = "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp\\public";
+    projectFilePath = "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp";
+    std::unordered_set<std::string> validFileExtensions = {".js", ".jsx", ".html", ".css"};
+
     std::unordered_set<std::string> validImageExtensions = {".jpg", ".jpeg", ".png", ".webp"};
 
     // Find all the images first
     //  Contains only strings
     std::unordered_set<std::string> imageFiles;
 
-    for (const auto &entry : std::filesystem::recursive_directory_iterator(basePath))
+    for (const auto &entry : std::filesystem::recursive_directory_iterator(publicFolderPath))
     {
         if (entry.path().string().find("node_modules") == std::string::npos && validImageExtensions.find(entry.path().extension().string()) != validImageExtensions.end())
         {
-            std::string relativePath = std::filesystem::relative(entry.path(), basePath).string();
-            // Check from public down the way to last
-            // '' passing character "" passing string
+            //  "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp\\public";
+            //  "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp\\public\\courosal\\animals.webp"
+
+            std::string relativePath = std::filesystem::relative(entry.path(), publicFolderPath).string();
             std::replace(relativePath.begin(), relativePath.end(), '\\', '/');
             imageFiles.insert(relativePath);
         }
     }
-    // for (auto image : imageFiles)
+    // for (auto i : imageFiles)
     // {
-    //     std::cout << image << "\n";
+    //     std::cout << i << "\n";
     // }
 
     try
     {
-        for (const auto &entry : std::filesystem::recursive_directory_iterator(basePath))
+        for (const auto &entry : std::filesystem::recursive_directory_iterator(projectFilePath))
         {
             // If the substring is not found the find function returns a large number which is nothing but the same value as the value in npos
-            if (entry.path().string().find("node_modules") == std::string::npos && validExtensions.find(entry.path().extension().string()) != validExtensions.end())
+            if (entry.path().string().find("node_modules") == std::string::npos && validFileExtensions.find(entry.path().extension().string()) != validFileExtensions.end())
             {
 
-                // std::cout << "checking file : " << entry.path() << "\n";
                 std::string fileName = entry.path().string();
-                // std::cout << fileName << "\n";
                 //  Opening the file using the if file stream
                 std::ifstream file(fileName);
                 if (!file)
@@ -54,37 +58,53 @@ int main()
                     std::cerr << "Error opening file: " << fileName << std::endl;
                 }
                 std::string fileContents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
                 file.close();
                 // Finding if any of the image file is used in this currently oponened file
                 for (auto imageFile : imageFiles)
                 {
-                    std::stringstream ss(imageFile);
-                    std::string folder;
-                    std::vector<std::string> folders;
+                    // std::cout << "hgere";
+                    // std::stringstream ss(imageFile);
+                    // std::string folder;
+                    // std::vector<std::string> folders;
 
-                    while (std::getline(ss, folder, '/'))
+                    // while (std::getline(ss, folder, '/'))
+                    // {
+                    //     folders.push_back(folder);
+                    // }
+
+                    std::vector<std::string> possiblePaths = {imageFile, "/" + imageFile, "./" + imageFile, "../" + imageFile, "public" + '/' + imageFile, "/public/" + imageFile, "./public/" + imageFile, "../public/" + imageFile};
+                    //* icons/logo.png , /icons/logo.png , ./icons/logo.png , ../icons/logo.png , public/icons/logo.png , /public/icons/logo.png , ./public/icons/logo.png , ../public/icons/logo.png
+
+                    for (uint16_t i = 0; i < possiblePaths.size(); i++)
                     {
-                        folders.push_back(folder);
-                    }
-
-                    // Generating all possible paths of the image
-                    std::string path = "";
-                    for (int i = folders.size() - 1; i >= 0; i--)
-                    {
-
-                        path = "/" + folders[i] + path;
-
-                        // Here add all possiblity css , js , html (single and double quotes)
-                        // With leading '/' and without leading '/'
-                        // HTML , CSS and JS
-                        if (fileContents.find("src=\"" + path + "\"") != std::string::npos || fileContents.find("src='" + path + "'") != std::string::npos || fileContents.find("src=\"" + path.substr(1) + "\"") != std::string::npos || fileContents.find("src='" + path.substr(1) + "'") != std::string::npos || fileContents.find("url(\"" + path + "\")") != std::string::npos || fileContents.find("url('" + path + "')") != std::string::npos || fileContents.find("url(\"" + path.substr(1) + "\")") != std::string::npos || fileContents.find("url('" + path.substr(1) + "')") != std::string::npos)
+                        if (fileContents.find("\"" + possiblePaths[i] + "\"") != std::string::npos || fileContents.find("'" + possiblePaths[i] + "'") != std::string::npos)
                         {
-                            // std::cout << imageFile << " is found in " << fileName << "\n";
+                            std::cout << "\"" + possiblePaths[i] + "\"" << "\n"
+                                      << "'" + possiblePaths[i] + "'" << "\n";
                             imageFiles.erase(imageFile);
+                            // Found the image so break from generating all possible paths of the image
                             break;
                         }
                     }
-                    folder.clear();
+
+                    // Generating all possible paths of the image
+                    // std::regex filePathRegex(R"((?:src=['"]|href=['"]|url\(['"]?)(\.\.?/[^'")]+))");
+                    // std::regex filePathRegex(R"((?:src=['"]|href=['"]|url\(['"]?)(/?[^'")]+))");
+
+                    // std::smatch match;
+
+                    // std::string::const_iterator searchStart(fileContents.cbegin());
+                    // std::string::const_iterator searchEnd(fileContents.cend());
+                    // while (std::regex_search(searchStart, searchEnd, match, filePathRegex))
+                    // {
+                    // for(uint16_t i=folders.size()-1;i>=0;i--){
+
+                    // }
+                    // std::cout << "Found path: " << match[1] << " for file name " << fileName << "\n";
+                    // Moving the iterator past the last match
+                    //     searchStart = match.suffix().first;
+                    // }
                 }
             }
         }

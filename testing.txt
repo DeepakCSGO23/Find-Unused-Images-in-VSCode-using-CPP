@@ -1,3 +1,28 @@
 public/courousal/gaming.jpg
-/gaming.jpg
+
+gaming.jpg
+
+-> store path while storing image files
+
+-> get img file linking paths from all HTML,CSS & JS Files
+
+-> Web Pages framework react,vue.js public folder is a special folder
+
+-> only root-relative not relative and absolute
+
+pvp/public/courousal/gaming.jpg
+
+Check file location
+
+pvp/src/login.jsx
+
+
+
+
+ /courousal/gaming.jpg is present in 
+courousal/gaming.jpg
+public/courousal/gaming.jpg
+/public/courousal/gaming.jpg
+../courousal/gaming.jpg
+.../courousal/gaming.jpg
 

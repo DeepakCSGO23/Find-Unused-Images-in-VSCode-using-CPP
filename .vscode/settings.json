@@ -61,7 +61,8 @@
     "vector": "cpp",
     "list": "cpp",
     "unordered_set": "cpp",
-    "xhash": "cpp"
+    "xhash": "cpp",
+    "regex": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }
