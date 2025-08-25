@@ -63,8 +63,8 @@ This tool is designed to **scan a project directory** and identify **unused imag
 1. **Clone the Repository**:
 
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone https://github.com/DeepakCSGO23/Find-Unused-Images-in-VSCode-using-CPP.git
+
    ```
 
 2. **Compile the Code**:
@@ -105,8 +105,8 @@ This tool is designed to **scan a project directory** and identify **unused imag
 
 - To add or remove file extensions, modify the `validFileExtensions` and `validImageExtensions` sets in the code:
   ```cpp
-  std::unordered_set<std::string> validFileExtensions = {".js", ".jsx", ".html", ".css"};
-  std::unordered_set<std::string> validImageExtensions = {".jpg", ".jpeg", ".png", ".webp"};
+  std::unordered_set<std::string> validFileExtensions = {".js", ".jsx", ".ts", ".tsx", ".html", ".css"};
+  std::unordered_set<std::string> validImageExtensions = {".jpg", ".jpeg", ".png", ".webp", ".svg"};
   ```
 
 ### **Path Variations**
@@ -186,8 +186,9 @@ For questions or feedback, please contact:
 
 - ** K.N Deepak **
 - **Email**: kkvdhoorika@gmail.com
-- **GitHub**: [Your GitHub Profile](https://github.com/DeepakCSGO23)
+- **GitHub**: https://github.com/DeepakCSGO23
+- **Buy Me A Coffee** https://buymeacoffee.com/deepakkn
 
 ---
 
-Enjoy using the Unused Image Finder Tool! 🚀
+Enjoy using the Unused Image Finder Tool!

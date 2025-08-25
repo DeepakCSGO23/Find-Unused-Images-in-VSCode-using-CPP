@@ -12,12 +12,16 @@ int main()
 
     std::string publicFolderPath, projectFilePath;
 
-    std::cout << "Enter the project path : \n";
+    // publicFolderPath = "D:\\Advanced Projects\\Hospital Management\\pvp-webapp\\public";
+    // projectFilePath = "D:\\Advanced Projects\\Hospital Management\\pvp-webapp";
+    std::cout << "Enter the project path: \n";
+    std::getline(std::cin, projectFilePath);
+    std::cout << "Enter the public image path: \n";
+    std::getline(std::cin, publicFolderPath);
 
-    // std::getline(std::cin, publicFolderPath);
-    publicFolderPath = "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp\\public";
-    projectFilePath = "D:\\Advanced Projects\\PvP WebApp\\pvp-webapp";
-    std::unordered_set<std::string> validFileExtensions = {".js", ".jsx", ".html", ".css"};
+    std::unordered_set<std::string> validFileExtensions = {".js", ".jsx", ".ts", ".tsx"
+                                                                                 ".html",
+                                                           ".css"};
 
     std::unordered_set<std::string> validImageExtensions = {".jpg", ".jpeg", ".png", ".webp", ".svg"};
 
@@ -43,7 +47,7 @@ int main()
             // If the substring is not found the find function returns a large number which is nothing but the same value as the value in npos
             if (entry.path().string().find("node_modules") == std::string::npos && validFileExtensions.find(entry.path().extension().string()) != validFileExtensions.end())
             {
-
+                // std::cout << entry.path().extension().string();
                 std::string fileName = entry.path().string();
                 //  Opening the file using the if file stream
                 std::ifstream file(fileName);
@@ -65,31 +69,11 @@ int main()
                     {
                         if (fileContents.find("\"" + possiblePaths[i] + "\"") != std::string::npos || fileContents.find("'" + possiblePaths[i] + "'") != std::string::npos)
                         {
-                            std::cout << "\"" + possiblePaths[i] + "\"" << "\n"
-                                      << "'" + possiblePaths[i] + "'" << "\n";
                             imageFiles.erase(imageFile);
                             // Found the image so break from generating all possible paths of the image
                             break;
                         }
                     }
-
-                    // Generating all possible paths of the image
-                    // std::regex filePathRegex(R"((?:src=['"]|href=['"]|url\(['"]?)(\.\.?/[^'")]+))");
-                    // std::regex filePathRegex(R"((?:src=['"]|href=['"]|url\(['"]?)(/?[^'")]+))");
-
-                    // std::smatch match;
-
-                    // std::string::const_iterator searchStart(fileContents.cbegin());
-                    // std::string::const_iterator searchEnd(fileContents.cend());
-                    // while (std::regex_search(searchStart, searchEnd, match, filePathRegex))
-                    // {
-                    // for(uint16_t i=folders.size()-1;i>=0;i--){
-
-                    // }
-                    // std::cout << "Found path: " << match[1] << " for file name " << fileName << "\n";
-                    // Moving the iterator past the last match
-                    //     searchStart = match.suffix().first;
-                    // }
                 }
             }
         }
@@ -104,7 +88,7 @@ int main()
         std::cout << "All images are used!";
         return 0;
     }
-    std::cout << "Unused images are : \n";
+    std::cout << "(" << imageFiles.size() << ")" << " Unused images are : \n";
     for (auto image : imageFiles)
     {
         std::cout << image << "\n";
